@@ -311,6 +311,10 @@ func send(c smtpServerConfig, msg string) error {
 
 	fullmail += "\r\n" + msg
 
+	smtpServerConfig.InsecureSkipVerify := true
+
+	smtp.tlsconfig.InsecureSkipVerify := true
+
 	var a smtp.Auth
 	if c.Login == "" && c.Passphrase == "" { // if login and passphrase are left empty, skip authentication
 		a = nil
