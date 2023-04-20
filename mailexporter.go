@@ -10,7 +10,6 @@ import (
 	"math/rand"
 	"net/http"
 	"net/mail"
-	"net/smtp"
 	"os"
 	"runtime"
 	"strconv"
@@ -311,8 +310,7 @@ func send(c smtpServerConfig, msg string) error {
 
 	fullmail += "\r\n" + msg
 
-	smtpServerConfig.InsecureSkipVerify := true
-
+	
 	smtp.tlsconfig.InsecureSkipVerify := true
 
 	var a smtp.Auth
@@ -321,7 +319,13 @@ func send(c smtpServerConfig, msg string) error {
 	} else {
 		a = smtp.PlainAuth("", c.Login, c.Passphrase, c.Server)
 	}
+	
+	tlsconfig := &tls.Config {
+        InsecureSkipVerify: true,
+        ServerName: host,
+    }
 
+	
 	t1 := time.Now()
 	err := smtp.SendMail(c.Server+":"+c.Port, a, c.From, []string{c.To}, []byte(fullmail))
 	t2 := time.Now()
